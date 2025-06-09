@@ -1,0 +1,17 @@
+[project]
+name = "NameNet"
+version = "0.1.0"
+description = "A NumPy-based feedforward neural network"
+authors = [{name = "Aaron Avram"}]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.dependencies]
+numpy = "*"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
