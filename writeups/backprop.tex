@@ -16,7 +16,7 @@
 
 \section*{Introduction}
 In this write up I will go through the derivation of the back propagation algorithm
-for deep feedfoward neural networks and discuss how I will implement it using
+for deep feedforward neural networks and discuss how I will implement it using
 NumPy.
 
 \section*{Set up}
@@ -56,8 +56,8 @@ and output respectively.
 
 Clearly our neural network is just a very large and complicated function and to get the gradients
 of the weights and biases, we can apply the above concept. This looks similar to dynamic programming
-where we break down the task of finding the complicated gradient of the weights of the network
-into a composition of the gradients of directly connected components of the network.
+where we are using memoization by caching the gradients of the preceeding layers as we differentiate
+through the network.
 
 \section*{Back Prop}
 Now, we will build up our gradients recursively working backwards from the output layer.
@@ -91,7 +91,7 @@ $z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$ so $\frac{\partial z^{(i)}_j}{\partial x^
     \\ \\
     &= (W^{(i)})^T
 \end{align*}
-Abusing notation again we will call this $\nabla_{x^{(i-1)}}(z^{(i)})$. Now we can combine the following results to find
+Abusing notation again we will associate this with a gradient vector $\nabla_{x^{(i-1)}}(z^{(i)})$. Now we can combine the following results to find
 the Jacobian of $x^{(i-1)}$ with respect to $x^{(i)}$. Observe that $\frac{\partial x^{(i)}_j}{\partial x^{(i-1)}_k} = 
 \frac{\partial x^{(i)}_j}{\partial z^{(i)}_j}\frac{\partial z^{(i)}_j}{\partial x^{(i-1)}_k}$ and we know both of these values.
 Thus, The Jacobian of $x^{(i-1)}$ with respect to $x^{(i)}$ is just the  Jacobian of $x^{(i-1)}$ with respect to $z^{(i)}$ with each row
@@ -112,11 +112,11 @@ respect to the weights and biases of each layer and store them.
 First consider $z^{(i)}$ and $W^{(i)}$, note that we can compute the Jacobian of the
 flattened version of $W^{(i)}$ with respect to $z^{(i)}$ but if we observe that
 the $j$th component of $z^{(i)}$ is only affected by the $j$th row of $W^{(i)}$
-we can construct our gradient matrix as containing the partial derivatives of each component of the
+we can construct our jacobian matrix as containing the partial derivatives of each component of the
 $j$th row of $W^{(i)}$ with respect to the $j$th component of $z^{(i)}$ as its columns. Now since
 $z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$, $\frac{z^{(i)}_j}{W^{i}_{jk}} = x^{(i-1)}_k$. Thus:
 \begin{align*}
-    J(z^{(i)})(W^{i}) &= \begin{bmatrix}
+    J(z^{(i)})(W^{(i)}) &= \begin{bmatrix}
         \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{11}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_i}1} \\
         \vdots & \ddots & \vdots \\
         \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{1l_{i-1}}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_il_{i-1}}} \\
