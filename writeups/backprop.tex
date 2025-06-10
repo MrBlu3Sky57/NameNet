@@ -60,5 +60,88 @@ where we break down the task of finding the complicated gradient of the weights 
 into a composition of the gradients of directly connected components of the network.
 
 \section*{Back Prop}
-Now, we will build up our gradients step by step, working backwards from the output layer.
+Now, we will build up our gradients recursively working backwards from the output layer.
+
+
+Since our loss function has scalar output, the gradient of the output layer
+with respect to the loss is straight forward:
+\begin{align*}
+    \nabla_{x^{(n)}}(L) = \begin{bmatrix}
+        \frac{\partial L}{\partial x^{(n)}_1} \\ \ldots \\ \frac{\partial L}{\partial x^{(n)}_{l_n}}
+    \end{bmatrix}
+\end{align*}
+Then for any layer $x^{(i)}$ we can consider the Jacobian of $z^{(i)}$ with
+respect to the output. However since $z^{(i)}_j$ only effects $x^{(i)}_j$ the
+Jacobian will be diagonal, so we can just write it as a gradient vector (abusing notation
+slightly).
+\begin{align*}
+        \nabla_{z^{(i)}}(x^{(i)}) = \begin{bmatrix}
+        \frac{\partial x^{(i)}_1}{\partial z^{(i)}_1} \\ \ldots \\ \frac{\partial x^{(i)}_{l_i}}{\partial z^{(i)}_{l_i}}
+    \end{bmatrix}
+\end{align*}
+Additionally we know that $x^{(i)} = \sigma(z^{(i)})$, so $\nabla_{z^{(i)}}(x^{(i)}) = \sigma'(z^{(i)})$. 
+Next we want to conisder the Jacobian of $x^{(i-1)}$ with respect to $z^{(i)}$, but notice that
+$z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$ so $\frac{\partial z^{(i)}_j}{\partial x^{(i-1)}_k} = W^{(i)}_{jk}$. Thus:
+\begin{align*}
+    J(z^{(i)})(x^{(i-1)}) &= \begin{bmatrix}
+        \frac{\partial z^{(i)}_1}{\partial x^{(i-1)}_1} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial x^{(i-1)}_1} \\
+        \vdots & \ddots & \vdots \\
+        \frac{\partial z^{(i)}_1}{\partial x^{(i-1)}_{l_{i-1}}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial x^{(i-1)}_{l_{i-1}}} \\
+    \end{bmatrix}
+    \\ \\
+    &= (W^{(i)})^T
+\end{align*}
+Abusing notation again we will call this $\nabla_{x^{(i-1)}}(z^{(i)})$. Now we can combine the following results to find
+the Jacobian of $x^{(i-1)}$ with respect to $x^{(i)}$. Observe that $\frac{\partial x^{(i)}_j}{\partial x^{(i-1)}_k} = 
+\frac{\partial x^{(i)}_j}{\partial z^{(i)}_j}\frac{\partial z^{(i)}_j}{\partial x^{(i-1)}_k}$ and we know both of these values.
+Thus, The Jacobian of $x^{(i-1)}$ with respect to $x^{(i)}$ is just the  Jacobian of $x^{(i-1)}$ with respect to $z^{(i)}$ with each row
+scaled by $\nabla_{z^{(i)}}(x^{(i)})$. So:
+\begin{align*}
+    \nabla_{x^{(i-1)}}(x^{(i)}) = \nabla_{x^{i-1}}(z^{(i)}) \odot \nabla_{z^{(i)}}(x^{(i)})^T
+\end{align*}
+Note we assume that the row vector in the equation is broadcasted by copying the rows on top of each other.
+
+
+
+With this we have a way of recursively calculating the gradient of each layer
+with respect to the loss function. The final step is to now compute the gradients with
+respect to the weights and biases of each layer and store them.
+
+
+
+First consider $z^{(i)}$ and $W^{(i)}$, note that we can compute the Jacobian of the
+flattened version of $W^{(i)}$ with respect to $z^{(i)}$ but if we observe that
+the $j$th component of $z^{(i)}$ is only affected by the $j$th row of $W^{(i)}$
+we can construct our gradient matrix as containing the partial derivatives of each component of the
+$j$th row of $W^{(i)}$ with respect to the $j$th component of $z^{(i)}$ as its columns. Now since
+$z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$, $\frac{z^{(i)}_j}{W^{i}_{jk}} = x^{(i-1)}_k$. Thus:
+\begin{align*}
+    J(z^{(i)})(W^{i}) &= \begin{bmatrix}
+        \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{11}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_i}1} \\
+        \vdots & \ddots & \vdots \\
+        \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{1l_{i-1}}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_il_{i-1}}} \\
+    \end{bmatrix} \\ \\
+    &= \begin{bmatrix}
+        x^{(i-1)}_1 & \ldots  & x^{(i-1)}_{l_{i-1}} \\
+        \vdots & \ddots & \vdots \\
+       x^{(i-1)}_1 & \ldots  & x^{(i-1)}_{l_{i-1}} \\
+    \end{bmatrix}
+\end{align*}
+Thus we can succinctly write the combined gradient as an outer product:
+\begin{align*}
+    \nabla_{W^{(i)}}(x^{(i)}) &=  J(z^{(i)})(W^{i}) \odot \nabla_{z^{(i)}}(x^{(i)})^T \\
+    &= x^{(i-1)}\nabla_{z^{(i)}}(x^{(i)})^T
+\end{align*}
+ 
+Next for the $b^{(i)}$ term since it is just a constant term and only its $j$th component affects
+the $j$-th component of $z^{(i)}$, $\nabla_{b^{(i)}}(z^{(i)}) = 1_{l_i}$ and
+$\nabla_{b^{(i)}}(x^{(i)}) = \nabla_{z^{(i)}}(x^{(i)})$. With this, we have
+fully detailed the recursive algorithm steps.
+
+\section*{Implementation}
+Since I am building this model in pure NumPy and Python, I want to leverage
+NumPy BLAS calls as much as possible, thus I will opt for storing the necessary gradients
+as arrays and using vectorized operations to compute each back prop step. Thus
+I will not create a individual neuron class and work from the layer level, storing a neuron
+array and a gradient array.
 \end{document}
