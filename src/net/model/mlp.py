@@ -3,7 +3,8 @@ File containing the MLP class
 """
 
 import numpy as np
-from net import Tensor, soft_max
+from net.tensor import Tensor
+from net.util import soft_max
 
 class MLP():
     """

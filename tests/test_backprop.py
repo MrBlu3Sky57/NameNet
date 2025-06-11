@@ -4,8 +4,8 @@ Testing backprop with comparison to finite differences.
 """
 
 import numpy as np
-from net import SEED, tanh, dtanh, cross_entropy
-from net.mlp import MLP
+from net.util import SEED, tanh, dtanh, cross_entropy
+from net import MLP
 
 # Numerical gradient checker
 def numerical_grad(loss_fn, param, eps=1e-5):

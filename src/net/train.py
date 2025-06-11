@@ -3,8 +3,8 @@ File containing the functionality for training an MLP
 """
 
 import numpy as np
-from net import SEED, one_hot
-from net.mlp import MLP
+from net.util import SEED, one_hot
+from net.model.mlp import MLP
 
 def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs: int, 
                  batch_size: int, lr: float):

@@ -4,9 +4,8 @@ Testing grad descent with dummy dataset.
 """
 
 import numpy as np
-from net import SEED, relu, drelu, one_hot, cross_entropy
-from net.mlp import MLP
-from net.train import grad_descent
+from net.util import SEED, relu, drelu, one_hot, cross_entropy
+from net import grad_descent, MLP
 
 
 def test_grad_descent_reduces_loss():

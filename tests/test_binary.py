@@ -4,9 +4,8 @@ Testing the model on XOR, AND and OR for overfitting
 """
 
 import numpy as np
-from net.mlp import MLP
-from net.train import grad_descent
-from net import tanh, dtanh
+from net import grad_descent, MLP
+from net.util import tanh, dtanh
 
 def test_mlp_overfits_xor():
     # XOR input and labels
