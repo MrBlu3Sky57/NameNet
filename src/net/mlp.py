@@ -3,7 +3,7 @@ File containing the MLP class
 """
 
 import numpy as np
-from net import Tensor
+from net import Tensor, soft_max
 
 class MLP():
     """
@@ -45,7 +45,7 @@ class MLP():
             self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
             if i != len(self.layers) - 1:
                 self.layers[i].value = self.sigma(self.unact[i].value)
-        self.layers[-1].value = self._soft_max(self.unact[-1].value)
+        self.layers[-1].value = soft_max(self.unact[-1].value)
 
     def backward(self, y_onehot):
         """
@@ -58,20 +58,3 @@ class MLP():
             self.layers[-(i + 1)].grad = self.unact[-i].grad @ self.weights[-i].value # Get total grad for each example in batch
             self.unact[-(i + 1)].grad = self.layers[-(i+1)].grad * self.dsigma(self.unact[-(i + 1)].value)
         return
-
-    @staticmethod
-    def _soft_max(x: np.ndarray):
-        """ 
-        If the array is of dimension 1 apply elementwise soft max
-        otherwise apply row wise.
-        """
-        if len(x.shape) == 0:
-            return None
-        if len(x.shape) == 1:
-            x = x - np.max(x) # Stability
-            logits = np.exp(x)
-            return logits / np.sum(logits)
-        if len(x.shape) > 1:
-            x = x - np.max(x, axis=1) # Stability
-            logits = np.exp(x)
-            return logits / np.sum(logits, axis=1)

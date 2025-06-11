@@ -32,7 +32,7 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
                 model.backward(y_batch)
 
                 # Update values then zero gradients
-                for w, b in zip(model.weights, model.biases):
+                for w, b in zip(model.weights[1:], model.biases[1:]):
                     # Do I need to zero grad??
                     w.increment(lr)
                     b.increment(lr)

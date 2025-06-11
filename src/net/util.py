@@ -30,6 +30,34 @@ def dtanh(x: np.ndarray):
     """
     return 1 - np.tanh(x) ** 2
 
+def relu(x: np.ndarray):
+    """
+    ReLU function
+    """
+    return np.maximum(0, x)
+
+def drelu(x: np.ndarray):
+    """
+    ReLU Derivative
+    """
+    return (x > 0).astype(float)
+
+def soft_max(x: np.ndarray):
+    """ 
+    If the array is of dimension 1 apply elementwise soft max
+    otherwise apply row wise.
+    """
+    if len(x.shape) == 0:
+        return None
+    if len(x.shape) == 1:
+        x = x - np.max(x) # Stability
+        logits = np.exp(x)
+        return logits / np.sum(logits)
+    if len(x.shape) > 1:
+        x = x - np.max(x, axis=1, keepdims=True) # Stability
+        logits = np.exp(x)
+        return logits / np.sum(logits, axis=1, keepdims=True)
+
 def cross_entropy(pred: np.ndarray, target: np.ndarray):
     """
     Cross entropy loss
