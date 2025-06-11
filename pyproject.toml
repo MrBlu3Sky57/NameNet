@@ -5,10 +5,15 @@ description = "Character-level name generator using a neural MLP"
 authors = [{name = "Your Name", email = "you@example.com"}]
 readme = "README.md"
 requires-python = ">=3.8"
-
 dependencies = [
     "numpy"
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [build-system]
 requires = ["setuptools>=61.0"]
