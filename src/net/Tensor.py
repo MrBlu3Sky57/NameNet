@@ -16,11 +16,11 @@ class Tensor():
     def __init__(self, value: np.ndarray):
         if value:
             self.value = value
-            self.grad = np.zeros(value.shape)      
+            self.grad = np.zeros(value.shape)
         else:
             self.value = None
-            self.grad = None     
-    
+            self.grad = None
+
     def zero_grad(self):
         """
         Set the gradients to zero

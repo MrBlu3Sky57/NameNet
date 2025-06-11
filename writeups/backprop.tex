@@ -117,20 +117,20 @@ $j$th row of $W^{(i)}$ with respect to the $j$th component of $z^{(i)}$ as its c
 $z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$, $\frac{z^{(i)}_j}{W^{i}_{jk}} = x^{(i-1)}_k$. Thus:
 \begin{align*}
     J(z^{(i)})(W^{(i)}) &= \begin{bmatrix}
-        \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{11}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_i}1} \\
+        \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{11}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_i1}} \\
         \vdots & \ddots & \vdots \\
         \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{1l_{i-1}}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_il_{i-1}}} \\
     \end{bmatrix} \\ \\
     &= \begin{bmatrix}
-        x^{(i-1)}_1 & \ldots  & x^{(i-1)}_{l_{i-1}} \\
+        x^{(i-1)}_1 & \ldots  & x^{(i-1)}_1 \\
         \vdots & \ddots & \vdots \\
-       x^{(i-1)}_1 & \ldots  & x^{(i-1)}_{l_{i-1}} \\
+       x^{(i-1)}_{l_{i-1}} & \ldots  & x^{(i-1)}_{l_{i-1}} \\
     \end{bmatrix}
 \end{align*}
-Thus we can succinctly write the combined gradient as an outer product:
+Thus we can succinctly write the combined gradient as a product:
 \begin{align*}
-    \nabla_{W^{(i)}}(x^{(i)}) &=  J(z^{(i)})(W^{i}) \odot \nabla_{z^{(i)}}(x^{(i)})^T \\
-    &= x^{(i-1)}\nabla_{z^{(i)}}(x^{(i)})^T
+    \nabla_{W^{(i)}}(x^{(i)}) &=  J(z^{(i)})(W^{i}) \odot \nabla_{z^{(i)}}(x^{(i)})\\
+    &= x^{(i-1)}\nabla_{z^{(i)}}(x^{(i)})
 \end{align*}
  
 Next for the $b^{(i)}$ term since it is just a constant term and only its $j$th component affects
