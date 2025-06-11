@@ -14,8 +14,12 @@ class Tensor():
     grad: np.ndarray
 
     def __init__(self, value: np.ndarray):
-        self.value = value
-        self.grad = np.zeros(value.shape)
+        if value:
+            self.value = value
+            self.grad = np.zeros(value.shape)      
+        else:
+            self.value = None
+            self.grad = None     
     
     def zero_grad(self):
         """
@@ -28,4 +32,3 @@ class Tensor():
         rate
         """
         self.value -= lr * self.grad
-
