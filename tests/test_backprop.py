@@ -67,7 +67,7 @@ def test_mlp_backprop_matches_numerical():
         return compute_loss()
 
     # Numerical gradient
-    numeric_grad = numerical_grad(loss_with_modified_weights, net.weights[i].value).T
+    numeric_grad = numerical_grad(loss_with_modified_weights, net.weights[i].value)
 
     # Compare (relative error)
     rel_error = np.linalg.norm(analytic_grad - numeric_grad) / (np.linalg.norm(analytic_grad) + np.linalg.norm(numeric_grad) + 1e-8)
