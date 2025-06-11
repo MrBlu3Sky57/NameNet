@@ -63,4 +63,6 @@ class MLP():
             x = x - np.max(x, axis=1) # Stability
             logits = np.exp(x)
             return logits / np.sum(logits, axis=1)
-        
+    
+    def _deriv_soft_max(self, x: np.ndarray):
+        return x * (1 - x)
