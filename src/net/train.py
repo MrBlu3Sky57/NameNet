@@ -36,3 +36,16 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
                     # Do I need to zero grad??
                     w.increment(lr)
                     b.increment(lr)
+                if model.emb is not None:
+                    # Construct embedding gradients on the fly -- Seems a bit clunky right now
+                    emb_grad = np.zeros_like(model.emb) # (v, d) -- v is vocab size, d is feature size
+                    d = emb_grad.shape[1]
+                    c = model.layers[0].value.shape[1] // d
+                    n = model.layers[0].value.shape[0]
+                    np.add.at(emb_grad, np.reshape(xs, n * c), np.reshape(model.layers[0].grad, n * c, d))
+                    
+                    # Layers.grad has (n, c * d) --> need to unbind --> (n, c, d) --> (n * c, d) want to index into emb with n * c grads and update
+                    # Xs, --> (n, c) --> need to unbind --> (n * c)
+
+
+                    model.emb -= lr * emb_grad

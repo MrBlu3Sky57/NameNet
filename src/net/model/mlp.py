@@ -18,10 +18,10 @@ class MLP():
     sigma: callable
     dsigma: callable
 
-    def __init__(self, size: tuple, sigma, dsigma):
+    def __init__(self, size: tuple, sigma, dsigma, emb: np.ndarray = None):
         """ 
         Create an empty network of the required size
-        assuming len(size) > 1
+        assuming len(size) > 1 which can support embeddings
         """
         self.sigma = sigma
         self.dsigma = dsigma
@@ -34,13 +34,17 @@ class MLP():
             self.unact.append(Tensor(None))
             self.weights.append(Tensor(np.random.randn(l2, l1)))
             self.biases.append(Tensor(np.random.randn(1, l2)))  # Always 2D row vector
+        self.emb = emb
 
     def forward(self, xs: np.ndarray):
         """
         Apply a forward pass through the MLP given the input data, assuming
         dimensions correspond correctly
         """
-        self.layers[0].value = xs
+        if self.emb is None:
+            self.layers[0].value = xs
+        else:
+            self.layers[0].value = self._embed(xs)
         for i in range(1, len(self.layers)):
 
             self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
@@ -52,10 +56,17 @@ class MLP():
         """
         Run a backward pass on the network (Assuming network gets matrix inputs)
         """
-        self.unact[-1].grad = self.layers[-1].value - y_onehot
+        self.unact[-1].grad = self.layers[-1].value - y_onehot # (n, l_-1)
         for i in range(1, len(self.layers)):
             self.weights[-i].grad = self.unact[-i].grad.T @ self.layers[-(i+1)].value # Sum across batch
             self.biases[-i].grad = np.sum(self.unact[-i].grad, axis=0) # Sum across batch
-            self.layers[-(i + 1)].grad = self.unact[-i].grad @ self.weights[-i].value # Get total grad for each example in batch
-            self.unact[-(i + 1)].grad = self.layers[-(i+1)].grad * self.dsigma(self.unact[-(i + 1)].value)
+            self.layers[-(i + 1)].grad = self.unact[-i].grad @ self.weights[-i].value # Get total grad for each example in batch (n, l_-(i+1))
+            self.unact[-(i + 1)].grad = self.layers[-(i+1)].grad * self.dsigma(self.unact[-(i + 1)].value) # (n, l_-(i+1))
         return
+
+    def _embed(self, xs: np.ndarray):
+        """
+        Embed inputs into feature space
+        """
+        embs = self.emb[xs]
+        return np.reshape(embs, shape=(embs.shape[0], -1))
