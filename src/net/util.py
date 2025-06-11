@@ -4,6 +4,9 @@ Module containing utility functions
 
 import numpy as np
 
+# Deterministic testing
+SEED = 42
+
 def one_hot(y: np.ndarray):
     """
     One Hot encode the vector y
