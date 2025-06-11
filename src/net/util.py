@@ -30,6 +30,8 @@ def dtanh(x: np.ndarray):
     """
     return 1 - np.tanh(x) ** 2
 
+# A caution -- The model fails for XOR with ReLU activation (likely due to dead neurons)
+# Might need to adjust initializations based on training data
 def relu(x: np.ndarray):
     """
     ReLU function

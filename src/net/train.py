@@ -36,4 +36,3 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
                     # Do I need to zero grad??
                     w.increment(lr)
                     b.increment(lr)
-        print(f"Epoch: {epoch + 1}/{epochs} done.")

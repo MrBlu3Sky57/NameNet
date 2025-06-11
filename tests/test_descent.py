@@ -1,3 +1,8 @@
+"""
+Testing grad descent with dummy dataset.
+      --- This test was written by Chat GPT ---
+"""
+
 import numpy as np
 from net import SEED, relu, drelu, one_hot, cross_entropy
 from net.mlp import MLP
