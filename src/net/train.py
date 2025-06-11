@@ -3,7 +3,7 @@ File containing the functionality for training an MLP
 """
 
 import numpy as np
-from net import MLP, SEED
+from net import MLP, SEED, one_hot
 
 def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs: int, 
                  batch_size: int, lr: float):
@@ -11,7 +11,7 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
     Function that performs gradient descent on a MLP object given input and output data
     """
 
-    y_onehot = _one_hot(ys)
+    y_onehot = one_hot(ys)
     generator = np.random.default_rng(SEED)
     for epoch in range(epochs):
 
@@ -36,14 +36,3 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
                     w.increment(lr)
                     b.increment(lr)
         print(f"Epoch: {epoch + 1}/{epochs} done.")
-
-def _one_hot(y: np.ndarray):
-    """
-    One Hot encode the vector y
-    """
-    d = len(np.unique(y))
-    y_onehot = np.zeros(shape=(len(y), d))
-    idxs = np.arange(start=0, stop=len(y), step=1)
-    y_onehot[idxs, y] = 1
-
-    return y_onehot

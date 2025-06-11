@@ -4,18 +4,7 @@ Testing backprop with comparison to finite differences.
 """
 
 import numpy as np
-from net import MLP, SEED
-
-# Tanh and its derivative for testing
-def tanh(x):
-    return np.tanh(x)
-
-def dtanh(x):
-    return 1 - np.tanh(x) ** 2
-
-# Cross-entropy loss
-def cross_entropy(pred, target):
-    return -np.sum(target * np.log(pred + 1e-8))
+from net import MLP, SEED, tanh, dtanh, cross_entropy
 
 # Numerical gradient checker
 def numerical_grad(loss_fn, param, eps=1e-5):
