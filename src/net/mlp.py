@@ -59,9 +59,9 @@ class MLP():
         """
         self.unact[-1].grad = self.layers[-1].value - y_onehot
         for i in range(1, len(self.layers)):
-            self.weights[-i].grad = self.layers[-(i+1)].value.T @ self.unact[-i].grad
-            self.biases[-i].grad = np.sum(self.unact[-i].grad, axis=0)
-            self.layers[-(i + 1)].grad = self.unact[-i].grad @ self.weights[-i].value
+            self.weights[-i].grad = self.layers[-(i+1)].value.T @ self.unact[-i].grad # Sum across batch
+            self.biases[-i].grad = np.sum(self.unact[-i].grad, axis=0) # Sum across batch
+            self.layers[-(i + 1)].grad = self.unact[-i].grad @ self.weights[-i].value # Get total grad for each example in batch
             self.unact[-(i + 1)].grad = self.layers[-(i+1)].grad * self.dsigma(self.unact[-(i + 1)].value)
         return
 
@@ -72,7 +72,7 @@ class MLP():
         otherwise apply row wise.
         """
         if len(x.shape) == 0:
-            raise ValueError
+            return None
         if len(x.shape) == 1:
             x = x - np.max(x) # Stability
             logits = np.exp(x)
