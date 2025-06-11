@@ -14,7 +14,7 @@ class Tensor():
     grad: np.ndarray
 
     def __init__(self, value: np.ndarray):
-        if value:
+        if value is not None:
             self.value = value
             self.grad = np.zeros(value.shape)
         else:

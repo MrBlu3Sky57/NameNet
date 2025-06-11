@@ -32,7 +32,7 @@ class MLP():
             self.layers.append(Tensor(None))
             self.unact.append(Tensor(None))
             self.weights.append(Tensor(np.random.randn(l2, l1)))
-            self.biases.append(Tensor(np.random.randn(l2))) # Could lead to a bug!!
+            self.biases.append(Tensor(np.random.randn(1, l2)))  # Always 2D row vector
 
     def forward(self, xs: np.ndarray):
         """
@@ -41,16 +41,10 @@ class MLP():
         """
         self.layers[0].value = xs
         for i in range(1, len(self.layers)):
-            if len(xs.shape) == 1:
-                self.biases[i].value = np.reshape(self.biases[i].value, shape=len(self.biases[i].value))
-                self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
-                if i != len(self.layers) - 1:
-                    self.layers[i].value = self.sigma(self.unact[i].value)
-            else:
-                self.biases[i].value = np.reshape(self.biases[i].value, shape=(1, len(self.biases[i].value)))
-                self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
-                if i != len(self.layers) - 1:
-                    self.layers[i].value = self.sigma(self.unact[i].value)
+
+            self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
+            if i != len(self.layers) - 1:
+                self.layers[i].value = self.sigma(self.unact[i].value)
         self.layers[-1].value = self._soft_max(self.unact[-1].value)
 
     def backward(self, y_onehot):
