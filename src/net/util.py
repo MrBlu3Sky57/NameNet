@@ -64,9 +64,9 @@ def cross_entropy(pred: np.ndarray, target: np.ndarray):
     """
     Cross entropy loss
     """
-    if pred.shape == 0:
+    if len(pred.shape) == 0:
         return None
-    elif pred.shape == 1:
-        return -np.sum(target * np.log(pred + 1e-8))
+    elif len(pred.shape) == 1:
+        return -np.sum(target * np.log(pred + 1e-8)) / pred.shape[0]
     else:
-        return -np.sum(target * np.log(pred + 1e-8), axis=1)
+        return -np.sum(target * np.log(pred + 1e-8), axis=1) / pred.shape[0]

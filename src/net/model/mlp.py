@@ -81,8 +81,7 @@ class MLP():
         Embed inputs into feature space
         """
         embs = self.emb.value[xs]
-        return np.reshape(embs, shape=(embs.shape[0], -1))
-    
-    def generate(self):
-        """ Generate new sequence from emb vocab"""
-        
+        if len(xs.shape) == 1:
+            return np.reshape(embs, shape=(embs.shape[0] * embs.shape[1]))
+        else:
+            return np.reshape(embs, shape=(embs.shape[0], -1))
