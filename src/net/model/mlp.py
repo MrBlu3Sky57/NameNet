@@ -23,7 +23,8 @@ class MLP():
     def __init__(self, size: tuple, sigma, dsigma, emb: np.ndarray = None):
         """ 
         Create an empty network of the required size
-        assuming len(size) > 1 which can support embeddings
+        assuming len(size) > 1 which can support embeddings.
+        Size must have the right dimensions based on data shape
         """
         self.ins = None
         self.sigma = sigma
@@ -81,3 +82,7 @@ class MLP():
         """
         embs = self.emb.value[xs]
         return np.reshape(embs, shape=(embs.shape[0], -1))
+    
+    def generate(self):
+        """ Generate new sequence from emb vocab"""
+        

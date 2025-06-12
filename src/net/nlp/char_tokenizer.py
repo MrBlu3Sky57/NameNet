@@ -8,13 +8,13 @@ def char_tokenize(strings: list[str], block_size: int):
     """
     Tokenize the list of strings by building blocks and also return a translator from character to index
     """
-    vocab = set(list("".join(strings)))
+    vocab = set(list(".".join(strings)))
     str_to_int = stoi(vocab)
     tokens = []
     for string in strings:
         inp = "." * block_size + string + "." * block_size
         for i in range(len(inp) - block_size):
-            tokens.append([str_to_int(s) for s in list(inp[i: i + block_size])])
+            tokens.append([str_to_int[s] for s in list(inp[i: i + block_size])])
 
     return np.array(tokens) , vocab
 
