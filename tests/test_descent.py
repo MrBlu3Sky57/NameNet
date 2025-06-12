@@ -23,7 +23,7 @@ def test_grad_descent_reduces_loss():
     init_loss = np.mean(cross_entropy(model.layers[-1].value, y_onehot))
 
     # Train
-    grad_descent(model, X, y, iters=1, epochs=5, batch_size=10, lr=0.1)
+    grad_descent(model, X, y, steps=10, batch_size=10, lr_start=0.1)
 
     # Final loss
     model.forward(X)

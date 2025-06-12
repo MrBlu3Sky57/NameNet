@@ -45,7 +45,7 @@ def drelu(x: np.ndarray):
     """
     return (x > 0).astype(float)
 
-def soft_max(x: np.ndarray):
+def soft_max(x: np.ndarray, temperature: float = 1.0):
     """ 
     If the array is of dimension 1 apply elementwise soft max
     otherwise apply row wise.
@@ -54,11 +54,11 @@ def soft_max(x: np.ndarray):
         return None
     if len(x.shape) == 1:
         x = x - np.max(x) # Stability
-        logits = np.exp(x)
+        logits = np.exp(x / temperature)
         return logits / np.sum(logits)
     if len(x.shape) > 1:
         x = x - np.max(x, axis=1, keepdims=True) # Stability
-        logits = np.exp(x)
+        logits = np.exp(x / temperature)
         return logits / np.sum(logits, axis=1, keepdims=True)
 
 def cross_entropy(pred: np.ndarray, target: np.ndarray):

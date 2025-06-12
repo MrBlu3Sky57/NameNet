@@ -41,7 +41,7 @@ class MLP():
             self.biases.append(Tensor(np.zeros((1, l2))))  # Always 2D row vector
         self.emb = Tensor(emb)
 
-    def forward(self, xs: np.ndarray):
+    def forward(self, xs: np.ndarray, temperature: float = 1.0):
         """
         Apply a forward pass through the MLP given the input data, assuming
         dimensions correspond correctly
@@ -57,7 +57,7 @@ class MLP():
             self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
             if i != len(self.layers) - 1:
                 self.layers[i].value = self.sigma(self.unact[i].value)
-        self.layers[-1].value = soft_max(self.unact[-1].value)
+        self.layers[-1].value = soft_max(self.unact[-1].value, temperature)
 
     def backward(self, y_onehot):
         """

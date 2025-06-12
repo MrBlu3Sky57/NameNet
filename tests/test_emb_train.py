@@ -36,10 +36,9 @@ def test_embedding_learning():
         model=model,
         xs=xs,
         ys=ys,
-        iters=1,
-        epochs=300,
+        steps=300,
         batch_size=3,
-        lr=0.1
+        lr_start=0.1
     )
 
     # 6. Evaluate results

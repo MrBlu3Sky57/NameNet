@@ -16,7 +16,7 @@ def test_mlp_overfits_xor():
     model = MLP(size=(2, 4, 2), sigma=tanh, dsigma=dtanh)
 
     # Train to overfit
-    grad_descent(model, X, y, iters=10, epochs=200, batch_size=4, lr=0.1)
+    grad_descent(model, X, y, steps=2000, batch_size=4, lr_start=0.1)
 
     # Predict
     model.forward(X)
@@ -30,7 +30,7 @@ def test_mlp_overfits_and():
     y = np.array([0, 0, 0, 1])  # AND
 
     model = MLP(size=(2, 4, 2), sigma=tanh, dsigma=dtanh)
-    grad_descent(model, X, y, iters=10, epochs=200, batch_size=4, lr=0.1)
+    grad_descent(model, X, y, steps=100, batch_size=4, lr_start=0.1)
 
     model.forward(X)
     preds = np.argmax(model.layers[-1].value, axis=1)
@@ -41,7 +41,7 @@ def test_mlp_overfits_or():
     y = np.array([0, 1, 1, 1])  # OR
 
     model = MLP(size=(2, 4, 2), sigma=tanh, dsigma=dtanh)
-    grad_descent(model, X, y, iters=10, epochs=200, batch_size=4, lr=0.1)
+    grad_descent(model, X, y, steps=100, batch_size=4, lr_start=0.1)
 
     model.forward(X)
     preds = np.argmax(model.layers[-1].value, axis=1)
