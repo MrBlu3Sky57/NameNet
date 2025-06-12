@@ -43,6 +43,7 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
                     b.increment(lr)
                 if model.emb.value is not None:
                     clip_grad(model.emb, 5.0)
+                    model.emb.grad += l2_lambda * model.emb.value
                     model.emb.increment(lr)
                     model.emb.zero_grad()
         print(f"epoch: {epoch + 1}/{epochs} done.")

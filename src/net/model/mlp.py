@@ -36,8 +36,9 @@ class MLP():
         for l1, l2 in zip(size, size[1:]):
             self.layers.append(Tensor(None))
             self.unact.append(Tensor(None))
-            self.weights.append(Tensor(np.random.randn(l2, l1)))
-            self.biases.append(Tensor(np.random.randn(1, l2)))  # Always 2D row vector
+            scale = np.sqrt(2.0 / l1)  # He initialization for ReLU, or use 1/l1 for tanh
+            self.weights.append(Tensor(np.random.randn(l2, l1) * scale))
+            self.biases.append(Tensor(np.zeros((1, l2))))  # Always 2D row vector
         self.emb = Tensor(emb)
 
     def forward(self, xs: np.ndarray):
