@@ -7,7 +7,7 @@ from net.util import SEED, one_hot, clip_grad
 from net.model.mlp import MLP
 
 def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs: int,
-                 batch_size: int, lr: float):
+                 batch_size: int, lr: float, l2_lambda: float = None):
     """
     Function that performs gradient descent on a MLP object given input and output data
     """
@@ -35,6 +35,10 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
                 for w, b in zip(model.weights[1:], model.biases[1:]):
                     clip_grad(w, 5.0)
                     clip_grad(b, 5.0)
+
+                    # L2 regularization
+                    if l2_lambda is not None:
+                        w.grad += l2_lambda * w.value
                     w.increment(lr)
                     b.increment(lr)
                 if model.emb.value is not None:
