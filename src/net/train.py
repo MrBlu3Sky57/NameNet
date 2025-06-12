@@ -3,7 +3,7 @@ File containing the functionality for training an MLP
 """
 
 import numpy as np
-from net.util import SEED, one_hot
+from net.util import SEED, one_hot, clip_grad
 from net.model.mlp import MLP
 
 def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs: int,
@@ -33,10 +33,12 @@ def grad_descent(model: MLP, xs: np.ndarray, ys: np.ndarray, iters: int, epochs:
 
                 # Update values
                 for w, b in zip(model.weights[1:], model.biases[1:]):
-                    # Do I need to zero grad??
+                    clip_grad(w, 5.0)
+                    clip_grad(b, 5.0)
                     w.increment(lr)
                     b.increment(lr)
                 if model.emb.value is not None:
+                    clip_grad(model.emb, 5.0)
                     model.emb.increment(lr)
                     model.emb.zero_grad()
         print(f"epoch: {epoch + 1}/{epochs} done.")

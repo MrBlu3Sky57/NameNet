@@ -3,6 +3,7 @@ Module containing utility functions
 """
 
 import numpy as np
+from .tensor import Tensor
 
 # Deterministic testing
 SEED = 42
@@ -11,7 +12,7 @@ def one_hot(y: np.ndarray):
     """
     One Hot encode the vector y
     """
-    d = len(np.unique(y))
+    d = np.max((np.unique(y))) + 1
     y_onehot = np.zeros(shape=(len(y), d))
     idxs = np.arange(start=0, stop=len(y), step=1)
     y_onehot[idxs, y] = 1
@@ -70,3 +71,9 @@ def cross_entropy(pred: np.ndarray, target: np.ndarray):
         return -np.sum(target * np.log(pred + 1e-8)) / pred.shape[0]
     else:
         return -np.sum(target * np.log(pred + 1e-8), axis=1) / pred.shape[0]
+
+def clip_grad(tensor: Tensor, max_norm: float):
+    """ Clip grad """
+    grad_norm = np.linalg.norm(tensor.grad)
+    if grad_norm > max_norm:
+        tensor.grad *= (max_norm / grad_norm)
