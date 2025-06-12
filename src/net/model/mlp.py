@@ -49,7 +49,7 @@ class MLP():
             self.ins = xs
         else:
             self.ins = xs
-            self.layers[0].value = np.reshape(self._embed(xs))
+            self.layers[0].value = self._embed(xs)
         for i in range(1, len(self.layers)):
 
             self.unact[i].value = self.layers[i - 1].value @ self.weights[i].value.T + self.biases[i].value
@@ -73,7 +73,7 @@ class MLP():
             d = self.emb.grad.shape[1]
             c = self.layers[0].value.shape[1] // d
             n = self.layers[0].value.shape[0]
-            np.add.at(self.emb.grad, np.reshape(self.ins, n * c), np.reshape(self.layers[0].grad, n * c, d))
+            np.add.at(self.emb.grad, np.reshape(self.ins, shape=(n * c)), np.reshape(self.layers[0].grad, shape=(n * c, d)))
 
     def _embed(self, xs: np.ndarray):
         """

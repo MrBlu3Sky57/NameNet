@@ -28,4 +28,4 @@ def itos(vocab: set[str]) -> dict[str, int]:
     """
     Build int to string converter
     """
-    return {i: v for i, v in enumerate(vocab)}
+    return dict(enumerate(vocab))
