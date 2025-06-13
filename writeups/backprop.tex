@@ -181,4 +181,17 @@ of the unactivated $i$th we have:
 \begin{align*}
     J(L)(X^{(i-1)}) &= GW^{(i)}
 \end{align*}
+Finally, there is one important note, the data I will be using for this specific
+implementation is name data, so the model will be given a sequence of characters
+and must predict the next in the form a probability distribution over the possible next characters.
+Thus, a popular technique, as seen in the Bengio et. al paper at the word level, is to embed
+the individual tokens, characters for us, into a higher dimensional feature space
+with an embedding matrix. Then these embeddings are trained with the weights and biases
+of the network, so that characters that are similar have similar embeddings. The embedding
+allows us to capture more fine properties of each character by tuning the dimension of the
+feature space. Thus, our $X^{(0)}$ is actually the flattened embedded inputs. Thus, the
+Gradient $X^{(0)}$ with respect to the loss captures the gradients of certain
+embedding rows with respect to the loss, so we use this data to update the embedding
+during gradient descent.
+
 \end{document}
