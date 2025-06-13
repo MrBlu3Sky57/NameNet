@@ -114,7 +114,7 @@ flattened version of $W^{(i)}$ with respect to $z^{(i)}$ but if we observe that
 the $j$th component of $z^{(i)}$ is only affected by the $j$th row of $W^{(i)}$
 we can construct our jacobian matrix as containing the partial derivatives of each component of the
 $j$th row of $W^{(i)}$ with respect to the $j$th component of $z^{(i)}$ as its columns. Now since
-$z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$, $\frac{z^{(i)}_j}{W^{i}_{jk}} = x^{(i-1)}_k$. Thus:
+$z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$, $\frac{\partial z^{(i)}_j}{\partial W^{i}_{jk}} = x^{(i-1)}_k$. Thus:
 \begin{align*}
     J(z^{(i)})(W^{(i)}) &= \begin{bmatrix}
         \frac{\partial z^{(i)}_1}{\partial W^{(i)}_{11}} & \ldots  & \frac{\partial z^{(i)}_{l_i}}{\partial W^{(i)}_{l_i1}} \\
@@ -130,7 +130,7 @@ $z^{(i)} = W^{(i)}x^{(i-1)} + b^{(i)}$, $\frac{z^{(i)}_j}{W^{i}_{jk}} = x^{(i-1)
 Thus we can succinctly write the combined gradient as a product:
 \begin{align*}
     \nabla_{W^{(i)}}(x^{(i)}) &=  J(z^{(i)})(W^{i}) \odot \nabla_{z^{(i)}}(x^{(i)})\\
-    &= x^{(i-1)}\nabla_{z^{(i)}}(x^{(i)})
+    &= x^{(i-1)}\nabla_{z^{(i)}}(x^{(i)})^T
 \end{align*}
  
 Next for the $b^{(i)}$ term since it is just a constant term and only its $j$th component affects
@@ -141,7 +141,44 @@ fully detailed the recursive algorithm steps.
 \section*{Implementation}
 Since I am building this model in pure NumPy and Python, I want to leverage
 NumPy BLAS calls as much as possible, thus I will opt for storing the necessary gradients
-as arrays and using vectorized operations to compute each back prop step. Thus
-I will not create a individual neuron class and work from the layer level, storing a neuron
-array and a gradient array.
+as arrays and using vectorized operations to compute each back prop step. Thus, I won't pass in indiviudal
+examples during training but instead I will pass in an array of them. The backprop step will look similar to what has
+been derived above, however I will store a matrix for each layer gradient. The weight and bias gradients
+will be the summed across training examples which happens naturally with matrix multiplication of the layer arrays.
+I.e. notice that, if the input batch has $m$ training examples with x now having its $i$th row
+being the $i$th training example. With this setup there is an elegant way
+to express the jacobian of the loss with respect to the last unactivated layer if the output
+activation is a softmax, and the loss is cross entropy:
+\begin{align*}
+    J(L)(z^{(n)}) = x^{(n)} - y_{\text{onehot}}
+\end{align*}
+And we can express the gradients of the weights by considering the same
+construction as in the single example case, but with the gradients per example
+summed. Thus, for $i < n$:
+\begin{align*}
+    J(L)(W^{(i)})_{jk} &= \sum_{p=1}^{m}\frac{L}{\partial W^{(i)}_{kj}} \\
+    &= \sum_{p=1}^{m}\frac{L}{\partial z^{(i)}_{pk}}\frac{\partial z^{(i)}_{pk}}{\partial W^{(i)}_{kj}}
+\end{align*}
+Plugging in values:
+\begin{align*}
+    J(L)(W^{(i)})_{jk} &= \sum_{p=1}^{m}\frac{L}{\partial z^{(i)}_{pk}}x_{pj}^{(i-1)}
+\end{align*}
+If we let G be the $m, l_i$ matrix of the gradients of each unactivated neuron in the $i$th layer
+we can write this as a matrix multiplication: $J(L)(W^{(i)}) = G^TX^{i-1}$.
+
+
+Then, $J(L)(B^{(i)})$ is just a sum across training examples for the previous unactivated layer grads. 
+
+
+Next to find $J(L)(X^{(i-1)})$ consider:
+\begin{align*}
+    J(L)(X^{(i-1)})_{jk} &= \frac{\partial L}{\partial x^{(i-1)}_jk} \\
+    &= \sum_{p = 0}^{l_i}\frac{\partial L}{\partial z^{(i)}_{jp}}\frac{\partial z^{(i)}_{jp}}{x^{(i-1)}_{jk}} \\
+    &= \sum_{p = 0}^{l_i}\frac{\partial L}{\partial z^{(i)}_{jp}}W^{(i)}_{pk}
+\end{align*}
+If we let the matrix G now represent the $m, l_i$ matrix containing the gradients
+of the unactivated $i$th we have:
+\begin{align*}
+    J(L)(X^{(i-1)}) &= GW^{(i)}
+\end{align*}
 \end{document}
