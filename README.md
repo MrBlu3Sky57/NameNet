@@ -10,7 +10,18 @@ A deep feedforward network for name generation.
 
 ## Plan
 In this project I will build up the mathematical formulations of a deep feedforward network
-(See the writeups folder) then use this theory to build a character level language model for name generation.ß
+(See the writeups folder) then use this theory to build a character level language model for name generation.
+
+## Implementation
+I discuss the mathematical details of my training and overall model design
+in my Backprop write up. The main idea of this project was to get an understanding of deep feed forward networks from the ground up, using NumPy to build the model from scratch. I modelled this as a baby version
+of the neural probabilistic generative model proposed in the Bengio et al.
+paper without any recurrent formulations. I will come back to this later
+building a character level RNN then upgrading it to a word level one.
+
+## Takeaways
+I was quite proud of the results of my model, it produced a lot of real names and had no junk output. I thoroughly enjoyed building this model and learned a lot about how to optimize a model once the core framework was built, as I think a lot of performance can be attributed to hyperparameter tuning and regularization. This also the first time I built
+a machine learning project as a proper python project not solely in jupyter notebooks. This made my code a lot easier to work with and made implementing integrated testing very easy, which saved me a lot of headache!
 
 ## Acknowledgments
 
