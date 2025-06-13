@@ -190,7 +190,7 @@ with an embedding matrix. Then these embeddings are trained with the weights and
 of the network, so that characters that are similar have similar embeddings. The embedding
 allows us to capture more fine properties of each character by tuning the dimension of the
 feature space. Thus, our $X^{(0)}$ is actually the flattened embedded inputs. Thus, the
-Gradient $X^{(0)}$ with respect to the loss captures the gradients of certain
+gradient $X^{(0)}$ with respect to the loss captures the gradients of certain
 embedding rows with respect to the loss, so we use this data to update the embedding
 during gradient descent.
 
